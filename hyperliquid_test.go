@@ -10,7 +10,7 @@ func GetHyperliquidAPI(t *testing.T) *Hyperliquid {
 	testAddress := os.Getenv("TEST_ADDRESS")
 	testPrivateKey := os.Getenv("TEST_PRIVATE_KEY")
 	if testAddress == "" || testPrivateKey == "" {
-		t.Skip("TEST_ADDRESS or TEST_PRIVATE_KEY is not set; skipping hyperliquid API tests")
+		t.Fatalf("TEST_ADDRESS or TEST_PRIVATE_KEY is not set; provide credentials via .test.env to run integration tests")
 	}
 
 	hl := NewHyperliquid(&HyperliquidClientConfig{

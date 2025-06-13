@@ -12,7 +12,7 @@ func GetExchangeAPI(t *testing.T) *ExchangeAPI {
 	testAddress := os.Getenv("TEST_ADDRESS")
 	testPrivateKey := os.Getenv("TEST_PRIVATE_KEY")
 	if testAddress == "" || testPrivateKey == "" {
-		t.Skip("TEST_ADDRESS or TEST_PRIVATE_KEY is not set; skipping exchange API tests")
+		t.Fatalf("TEST_ADDRESS or TEST_PRIVATE_KEY is not set; provide credentials via .test.env to run integration tests")
 	}
 
 	exchangeAPI := NewExchangeAPI(false)

@@ -8,7 +8,7 @@ import (
 func GetInfoAPI(t *testing.T) *InfoAPI {
 	testAddress := os.Getenv("TEST_ADDRESS")
 	if testAddress == "" {
-		t.Skip("TEST_ADDRESS is not set; skipping info API tests")
+		t.Fatalf("TEST_ADDRESS is not set; provide credentials via .test.env to run integration tests")
 	}
 
 	api := NewInfoAPI(false)
