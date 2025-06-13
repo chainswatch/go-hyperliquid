@@ -44,7 +44,7 @@ func main() {
 
 # Running tests
 
-Integration tests require access to a funded Hyperliquid account. Provide the credentials via environment variables `TEST_ADDRESS` and `TEST_PRIVATE_KEY`. For convenience you can create a `.test.env` file at the repository root and populate these variables:
+Integration tests require access to a funded Hyperliquid account. Provide the credentials via environment variables `TEST_ADDRESS` and `TEST_PRIVATE_KEY`. For convenience you can copy `.test.env.example` to `.test.env` at the repository root and populate these variables:
 
 ```
 TEST_ADDRESS=0xabc123...
@@ -52,6 +52,7 @@ TEST_PRIVATE_KEY=...
 ```
 
 The test suite automatically loads this file if present. Avoid committing any real credentials to source control.
+Environment files like `.env` and `.test.env` are ignored by git.
 
 Run the tests with:
 
