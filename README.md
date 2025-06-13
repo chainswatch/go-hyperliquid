@@ -1,5 +1,5 @@
 # go-hyperliquid
- A golang SDK for Hyperliquid API.
+A Golang SDK for the Hyperliquid API.
 
 # API reference
 - [Hyperliquid](https://app.hyperliquid.xyz/)
@@ -8,12 +8,12 @@
 
 # How to install?
 ```
-go get github.com/Logarithm-Labs/go-hyperliquid/hyperliquid
+go get github.com/chainswatch/go-hyperliquid
 ```
 
 # Documentation
 
-[![GoDoc](https://godoc.org/github.com/adshao/go-binance?status.svg)](https://pkg.go.dev/github.com/Logarithm-Labs/go-hyperliquid/hyperliquid#section-documentation)
+[![Go Reference](https://pkg.go.dev/badge/github.com/chainswatch/go-hyperliquid.svg)](https://pkg.go.dev/github.com/chainswatch/go-hyperliquid)
 
 
 # Quick start
@@ -23,7 +23,7 @@ package main
 import (
 	"log"
 
-	"github.com/Logarithm-Labs/go-hyperliquid/hyperliquid"
+        "github.com/chainswatch/go-hyperliquid"
 )
 
 func main() {
