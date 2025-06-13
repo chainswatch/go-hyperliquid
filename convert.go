@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"math"
 	"math/big"
 	"strconv"
 	"strings"
@@ -105,73 +104,22 @@ func pow10(exp int) float64 {
 //   - And no more than (maxDecimals - szDecimals) decimal places.
 //
 // Integer prices are returned as is.
-func PriceToWire(x float64, maxDecimals, szDecimals int) string {
-	// If the price is an integer, return it without decimals.
-	if x == math.Trunc(x) {
-		return strconv.FormatInt(int64(x), 10)
-	}
-
-	// Rule 1: The tick rule – maximum decimals allowed is (maxDecimals - szDecimals).
-	allowedTick := maxDecimals - szDecimals
-
-	// Rule 2: The significant figures rule – at most 5 significant digits.
-	var allowedSig int
-	if x >= 1 {
-		// Count digits in the integer part.
-		digits := int(math.Floor(math.Log10(x))) + 1
-		allowedSig = 5 - digits
-		if allowedSig < 0 {
-			allowedSig = 0
-		}
-	} else {
-		// For x < 1, determine the effective exponent.
-		exponent := int(math.Ceil(-math.Log10(x)))
-		allowedSig = 4 + exponent
-	}
-
-	// Final allowed decimals is the minimum of the tick rule and the significant figures rule.
-	allowedDecimals := allowedTick
-	if allowedSig < allowedDecimals {
-		allowedDecimals = allowedSig
-	}
-	if allowedDecimals < 0 {
-		allowedDecimals = 0
-	}
-
-	// Round the price to allowedDecimals decimals.
-	factor := pow10(allowedDecimals)
-	rounded := math.Round(x*factor) / factor
-
-	// Format the number with fixed precision.
-	s := strconv.FormatFloat(rounded, 'f', allowedDecimals, 64)
-	// Only trim trailing zeros if the formatted string contains a decimal point.
-	if strings.Contains(s, ".") {
-		s = strings.TrimRight(s, "0")
-		s = strings.TrimRight(s, ".")
-	}
-	return s
+func PriceToWire(x float64, _ int, _ int) string {
+	// The library previously tried to enforce tick/lot size restrictions.
+	// This behaviour was opinionated and has been removed.  Now we simply
+	// return the string representation of the provided value without any
+	// rounding or truncation.
+	return strconv.FormatFloat(x, 'f', -1, 64)
 }
 
 // SizeToWire converts a size value to its string representation,
 // rounding it to exactly szDecimals decimals.
 // Integer sizes are returned without decimals.
-func SizeToWire(x float64, szDecimals int) string {
-	// Return integer sizes without decimals.
-	if szDecimals == 0 {
-		return strconv.FormatInt(int64(x), 10)
-	}
-	// Return integer sizes directly.
-	if x == math.Trunc(x) {
-		return strconv.FormatInt(int64(x), 10)
-	}
-
-	// Round the size value to szDecimals decimals.
-	factor := pow10(szDecimals)
-	rounded := math.Round(x*factor) / factor
-
-	// Format with fixed precision then trim any trailing zeros and the decimal point.
-	s := strconv.FormatFloat(rounded, 'f', szDecimals, 64)
-	return strings.TrimRight(strings.TrimRight(s, "0"), ".")
+func SizeToWire(x float64, _ int) string {
+	// As with PriceToWire, no automatic rounding is applied.  The caller is
+	// responsible for providing values that already respect the desired
+	// precision.
+	return strconv.FormatFloat(x, 'f', -1, 64)
 }
 
 // To sign raw messages via EIP-712

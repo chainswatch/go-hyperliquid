@@ -1,15 +1,18 @@
+//go:build integration
+// +build integration
+
 package hyperliquid
 
 import (
-	"os"
-	"testing"
+       "os"
+       "testing"
 )
 
 func GetInfoAPI(t *testing.T) *InfoAPI {
-	testAddress := os.Getenv("TEST_ADDRESS")
-	if testAddress == "" {
-		t.Fatalf("TEST_ADDRESS is not set; provide credentials via .test.env to run integration tests")
-	}
+       testAddress := os.Getenv("TEST_ADDRESS")
+       if testAddress == "" {
+               t.Fatalf("TEST_ADDRESS is not set; provide credentials via .test.env to run integration tests")
+       }
 
 	api := NewInfoAPI(false)
 	if GLOBAL_DEBUG {
