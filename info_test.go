@@ -5,23 +5,22 @@ import (
 	"testing"
 )
 
-func GetInfoAPI() *InfoAPI {
+func GetInfoAPI(t *testing.T) *InfoAPI {
+	testAddress := os.Getenv("TEST_ADDRESS")
+	if testAddress == "" {
+		t.Skip("TEST_ADDRESS is not set; skipping info API tests")
+	}
+
 	api := NewInfoAPI(false)
 	if GLOBAL_DEBUG {
 		api.SetDebugActive()
 	}
-	// It should be active account to pass all tests
-	// like GetAccountFills, GetAccountWithdrawals, etc.
-	TEST_ADDRESS := os.Getenv("TEST_ADDRESS")
-	if TEST_ADDRESS == "" {
-		panic("Set TEST_ADDRESS in .env file")
-	}
-	api.SetAccountAddress(TEST_ADDRESS)
+	api.SetAccountAddress(testAddress)
 	return api
 }
 
 func TestInfoAPI_AccountAddress(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	address := api.AccountAddress()
 	targetAddress := os.Getenv("TEST_ADDRESS")
 	if targetAddress == "" {
@@ -33,7 +32,7 @@ func TestInfoAPI_AccountAddress(t *testing.T) {
 }
 
 func TestInfoAPI_Endpoint(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res := api.Endpoint()
 	if res != "/info" {
 		t.Errorf("Endpoint() = %v, want %v", res, "/info")
@@ -41,7 +40,7 @@ func TestInfoAPI_Endpoint(t *testing.T) {
 }
 
 func TestInfoAPI_GetAllMids(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAllMids()
 	if err != nil {
 		t.Errorf("GetAllMids() error = %v", err)
@@ -58,7 +57,7 @@ func TestInfoAPI_GetAllMids(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountFills(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountFills()
 	if err != nil {
 		t.Errorf("GetAccountFills() error = %v", err)
@@ -81,7 +80,7 @@ func TestInfoAPI_GetAccountFills(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountRateLimits(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountRateLimits()
 	if err != nil {
 		t.Errorf("GetAccountRateLimits() error = %v", err)
@@ -94,7 +93,7 @@ func TestInfoAPI_GetAccountRateLimits(t *testing.T) {
 }
 
 func TestInfoAPI_GetL2BookSnapshot(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetL2BookSnapshot("BTC")
 	if err != nil {
 		t.Errorf("GetL2BookSnapshot() error = %v", err)
@@ -106,7 +105,7 @@ func TestInfoAPI_GetL2BookSnapshot(t *testing.T) {
 }
 
 func TestInfoAPI_GetCandleSnapshot(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	startTime, endTime := GetDefaultTimeRange()
 	res, err := api.GetCandleSnapshot("ETH", "1d", startTime, endTime)
 	if err != nil {
@@ -122,7 +121,7 @@ func TestInfoAPI_GetCandleSnapshot(t *testing.T) {
 }
 
 func TestInfoAPI_GetMeta(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetMeta()
 	if err != nil {
 		t.Errorf("GetMeta() error = %v", err)
@@ -134,7 +133,7 @@ func TestInfoAPI_GetMeta(t *testing.T) {
 }
 
 func TestInfoAPI_GetUserState(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountState()
 	if err != nil {
 		t.Errorf("GetUserState() error = %v", err)
@@ -149,7 +148,7 @@ func TestInfoAPI_GetUserState(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountOpenOrders(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountOpenOrders()
 	if err != nil {
 		t.Errorf("GetAccountOpenOrders() error = %v", err)
@@ -161,7 +160,7 @@ func TestInfoAPI_GetAccountOpenOrders(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountFundingUpdates(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	startTime, endTime := GetDefaultTimeRange()
 	res, err := api.GetAccountFundingUpdates(startTime, endTime)
 	if err != nil {
@@ -174,7 +173,7 @@ func TestInfoAPI_GetAccountFundingUpdates(t *testing.T) {
 }
 
 func TestInfoAPI_GetHistoricalFundingRates(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	startTime, endTime := GetDefaultTimeRange()
 	res, err := api.GetHistoricalFundingRates("BTC", startTime, endTime)
 	if err != nil {
@@ -187,7 +186,7 @@ func TestInfoAPI_GetHistoricalFundingRates(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountNonFundingUpdates(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	startTime, endTime := GetDefaultTimeRange()
 	res, err := api.GetAccountNonFundingUpdates(startTime, endTime)
 	if err != nil {
@@ -233,7 +232,7 @@ func TestInfoAPI_GetAccountNonFundingUpdates(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountWithdrawals(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountWithdrawals()
 	if err != nil {
 		t.Errorf("GetAccountWithdrawals() error = %v", err)
@@ -250,7 +249,7 @@ func TestInfoAPI_GetAccountWithdrawals(t *testing.T) {
 }
 
 func TestInfoAPI_GetAccountDeposits(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountDeposits()
 	if err != nil {
 		t.Errorf("GetAccountDeposits() error = %v", err)
@@ -267,7 +266,7 @@ func TestInfoAPI_GetAccountDeposits(t *testing.T) {
 }
 
 func TestInfoAPI_GetMarketPx(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetMartketPx("BTC")
 	if err != nil {
 		t.Errorf("GetMartketPx() error = %v", err)
@@ -279,7 +278,7 @@ func TestInfoAPI_GetMarketPx(t *testing.T) {
 }
 
 func TestInfoAPI_BuildMetaMap(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.BuildMetaMap()
 	if err != nil {
 		t.Errorf("BuildMetaMap() error = %v", err)
@@ -298,7 +297,7 @@ func TestInfoAPI_BuildMetaMap(t *testing.T) {
 }
 
 func TestInfoAPI_BuildSpotMetaMap(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.BuildSpotMetaMap()
 	if err != nil {
 		t.Errorf("BuildSpotMetaMap() error = %v", err)
@@ -318,7 +317,7 @@ func TestInfoAPI_BuildSpotMetaMap(t *testing.T) {
 }
 
 func TestInfoAPI_GetSpotMeta(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetSpotMeta()
 	if err != nil {
 		t.Errorf("GetSpotMeta() error = %v", err)
@@ -330,7 +329,7 @@ func TestInfoAPI_GetSpotMeta(t *testing.T) {
 }
 
 func TestInfoAPI_GetAllSpotPrices(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAllSpotPrices()
 	if err != nil {
 		t.Errorf("GetAllSpotPrices() error = %v", err)
@@ -342,7 +341,7 @@ func TestInfoAPI_GetAllSpotPrices(t *testing.T) {
 }
 
 func TestInfoAPI_GetSpotMarketPx(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetSpotMarketPx("HYPE")
 	if err != nil {
 		t.Errorf("GetSpotMarketPx() error = %v", err)
@@ -354,7 +353,7 @@ func TestInfoAPI_GetSpotMarketPx(t *testing.T) {
 }
 
 func TestInfoAPI_GetUserStateSpot(t *testing.T) {
-	api := GetInfoAPI()
+	api := GetInfoAPI(t)
 	res, err := api.GetAccountStateSpot()
 	if err != nil {
 		t.Errorf("GetUserStateSpot() error = %v", err)

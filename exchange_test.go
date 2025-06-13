@@ -8,23 +8,26 @@ import (
 	"time"
 )
 
-func GetExchangeAPI() *ExchangeAPI {
+func GetExchangeAPI(t *testing.T) *ExchangeAPI {
+	testAddress := os.Getenv("TEST_ADDRESS")
+	testPrivateKey := os.Getenv("TEST_PRIVATE_KEY")
+	if testAddress == "" || testPrivateKey == "" {
+		t.Skip("TEST_ADDRESS or TEST_PRIVATE_KEY is not set; skipping exchange API tests")
+	}
+
 	exchangeAPI := NewExchangeAPI(false)
 	if GLOBAL_DEBUG {
 		exchangeAPI.SetDebugActive()
 	}
-	TEST_ADDRESS := os.Getenv("TEST_ADDRESS")
-	TEST_PRIVATE_KEY := os.Getenv("TEST_PRIVATE_KEY")
-	err := exchangeAPI.SetPrivateKey(TEST_PRIVATE_KEY)
-	if err != nil {
-		panic(err)
+	if err := exchangeAPI.SetPrivateKey(testPrivateKey); err != nil {
+		t.Fatalf("SetPrivateKey() error: %v", err)
 	}
-	exchangeAPI.SetAccountAddress(TEST_ADDRESS)
+	exchangeAPI.SetAccountAddress(testAddress)
 	return exchangeAPI
 }
 
 func TestExchangeAPI_Endpoint(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	res := exchangeAPI.Endpoint()
 	if res != "/exchange" {
 		t.Errorf("Endpoint() = %v, want %v", res, "/exchange")
@@ -32,7 +35,7 @@ func TestExchangeAPI_Endpoint(t *testing.T) {
 }
 
 func TestExchangeAPI_AccountAddress(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	res := exchangeAPI.AccountAddress()
 	TARGET_ADDRESS := os.Getenv("TEST_ADDRESS")
 	if res != TARGET_ADDRESS {
@@ -41,7 +44,7 @@ func TestExchangeAPI_AccountAddress(t *testing.T) {
 }
 
 func TestExchangeAPI_isMainnet(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	res := exchangeAPI.IsMainnet()
 	if res != false {
 		t.Errorf("isMainnet() = %v, want %v", res, true)
@@ -49,7 +52,7 @@ func TestExchangeAPI_isMainnet(t *testing.T) {
 }
 
 func TestExchageAPI_TestMetaIsNotEmpty(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	meta := exchangeAPI.meta
 	if meta == nil {
 		t.Errorf("Meta() = %v, want not nil", meta)
@@ -61,7 +64,7 @@ func TestExchageAPI_TestMetaIsNotEmpty(t *testing.T) {
 }
 
 func TestExchangeAPI_UpdateLeverage(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	_, err := exchangeAPI.UpdateLeverage("ETH", true, 20)
 	if err != nil {
 		t.Errorf("UpdateLeverage() error = %v", err)
@@ -77,7 +80,7 @@ func TestExchangeAPI_UpdateLeverage(t *testing.T) {
 }
 
 func TestExchangeAPI_MarketOpen(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := -0.01
 	coin := "ETH"
 	res, err := exchangeAPI.MarketOrder(coin, size, nil)
@@ -119,7 +122,7 @@ func TestExchangeAPI_MarketOpen(t *testing.T) {
 }
 
 func TestExchangeAPI_MarketClose(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	res, err := exchangeAPI.ClosePosition("ETH")
 	if err != nil {
 		t.Errorf("MakeClose() error = %v", err)
@@ -128,7 +131,7 @@ func TestExchangeAPI_MarketClose(t *testing.T) {
 }
 
 func TestExchangeAPI_LimitOrder(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := 100.1234
 	coin := "PNUT"
 	px := 0.154956
@@ -140,7 +143,7 @@ func TestExchangeAPI_LimitOrder(t *testing.T) {
 }
 
 func TestExchangeAPI_CancelAllOrders(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	res, err := exchangeAPI.CancelAllOrders()
 	if err != nil {
 		t.Errorf("CancelAllOrders() error = %v", err)
@@ -149,7 +152,7 @@ func TestExchangeAPI_CancelAllOrders(t *testing.T) {
 }
 
 func TestExchangeAPI_CreateLimitOrderAndCancelOrderByCloidt(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := -0.01
 	coin := "BTC"
 	px := 105000.0
@@ -186,7 +189,7 @@ func TestExchangeAPI_CreateLimitOrderAndCancelOrderByCloidt(t *testing.T) {
 }
 
 func TestExchangeAPI_CreateLimitOrderAndCancelOrderByOid(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := 0.1
 	coin := "BTC"
 	px := 85000.0
@@ -222,7 +225,7 @@ func TestExchangeAPI_CreateLimitOrderAndCancelOrderByOid(t *testing.T) {
 }
 
 func TestExchangeAPI_TestModifyOrder(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := 0.005
 	coin := "ETH"
 	px := 2000.0
@@ -278,7 +281,7 @@ func TestExchangeAPI_TestModifyOrder(t *testing.T) {
 }
 
 func TestExchangeAPI_TestMultipleMarketOrder(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	testCases := []struct {
 		coin string
 		size float64
@@ -307,7 +310,7 @@ func TestExchangeAPI_TestMultipleMarketOrder(t *testing.T) {
 }
 
 func TestExchangeAPI_TestIncorrectOrderSize(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := 0.1
 	coin := "ADA"
 	res, err := exchangeAPI.MarketOrder(coin, size, nil)
@@ -320,7 +323,7 @@ func TestExchangeAPI_TestIncorrectOrderSize(t *testing.T) {
 }
 
 func TestExchangeAPI_TestClosePositionByMarket(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := -1.0
 	coin := "ETH"
 	res, err := exchangeAPI.MarketOrder(coin, size, nil)
@@ -347,7 +350,7 @@ func TestExchangeAPI_TestClosePositionByMarket(t *testing.T) {
 
 // Test Mainnet Only
 func TestExchangeAPI_TestWithdraw(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	withdrawAmount := 20.0
 	stateBefore, err := exchangeAPI.infoAPI.GetUserState(exchangeAPI.AccountAddress())
 	if err != nil {
@@ -367,7 +370,7 @@ func TestExchangeAPI_TestWithdraw(t *testing.T) {
 }
 
 func TestExchageAPI_TestMarketOrderSpot(t *testing.T) {
-	exchangeAPI := GetExchangeAPI()
+	exchangeAPI := GetExchangeAPI(t)
 	size := 0.81
 	coin := "HYPE"
 	res, err := exchangeAPI.MarketOrderSpot(coin, size, nil)

@@ -6,11 +6,17 @@ import (
 	"testing"
 )
 
-func GetHyperliquidAPI() *Hyperliquid {
+func GetHyperliquidAPI(t *testing.T) *Hyperliquid {
+	testAddress := os.Getenv("TEST_ADDRESS")
+	testPrivateKey := os.Getenv("TEST_PRIVATE_KEY")
+	if testAddress == "" || testPrivateKey == "" {
+		t.Skip("TEST_ADDRESS or TEST_PRIVATE_KEY is not set; skipping hyperliquid API tests")
+	}
+
 	hl := NewHyperliquid(&HyperliquidClientConfig{
 		IsMainnet:      false,
-		AccountAddress: os.Getenv("TEST_ADDRESS"),
-		PrivateKey:     os.Getenv("TEST_PRIVATE_KEY"),
+		AccountAddress: testAddress,
+		PrivateKey:     testPrivateKey,
 	})
 	if GLOBAL_DEBUG {
 		hl.SetDebugActive()
@@ -19,7 +25,7 @@ func GetHyperliquidAPI() *Hyperliquid {
 }
 
 func TestHyperliquid_CheckFieldsConsistency(t *testing.T) {
-	hl := GetHyperliquidAPI()
+	hl := GetHyperliquidAPI(t)
 	if hl.ExchangeAPI.baseEndpoint != "/exchange" {
 		t.Errorf("baseEndpoint = %v, want %v", hl.ExchangeAPI.baseEndpoint, "/exchange")
 	}
@@ -55,7 +61,7 @@ func TestHyperliquid_CheckFieldsConsistency(t *testing.T) {
 }
 
 func TestHyperliquid_MakeSomeTradingLogic(t *testing.T) {
-	client := GetHyperliquidAPI()
+	client := GetHyperliquidAPI(t)
 
 	// Make limit order
 	res1, err := client.LimitOrder(TifGtc, "ETH", 0.01, 1234.1, false)
@@ -121,7 +127,7 @@ func TestHyperliquid_MakeSomeTradingLogic(t *testing.T) {
 }
 
 func TestHyperliquid_MarketOrder(t *testing.T) {
-	client := GetHyperliquidAPI()
+	client := GetHyperliquidAPI(t)
 	order, err := client.MarketOrder("ADA", 100, nil)
 	if err != nil {
 		t.Errorf("Error: %v", err)
@@ -130,7 +136,7 @@ func TestHyperliquid_MarketOrder(t *testing.T) {
 }
 
 func TestHyperliquid_LimitOrder(t *testing.T) {
-	client := GetHyperliquidAPI()
+	client := GetHyperliquidAPI(t)
 	order1, err := client.LimitOrder(TifGtc, "BTC", 0.01, 70000, false)
 	if err != nil {
 		t.Errorf("Error: %v", err)
@@ -144,7 +150,7 @@ func TestHyperliquid_LimitOrder(t *testing.T) {
 }
 
 func TestHyperliquid_GoLimitOrders(t *testing.T) {
-	client := GetHyperliquidAPI()
+	client := GetHyperliquidAPI(t)
 	wg := &sync.WaitGroup{}
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
