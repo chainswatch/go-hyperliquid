@@ -183,14 +183,9 @@ func (api *ExchangeAPI) BulkCancelOrders(cancels []CancelOidWire) (*OrderRespons
 // Bulk modify orders
 // https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/exchange-endpoint#modify-multiple-orders
 func (api *ExchangeAPI) BulkModifyOrders(modifyRequests []ModifyOrderRequest, isSpot bool) (*OrderResponse, error) {
-	wires := []ModifyOrderWire{}
-
-	for _, req := range modifyRequests {
-		wires = append(wires, ModifyOrderRequestToWire(req, api.meta, isSpot))
-	}
 	action := ModifyOrderAction{
 		Type:     "batchModify",
-		Modifies: wires,
+		Modifies: modifyRequests,
 	}
 
 	timestamp := GetNonce()

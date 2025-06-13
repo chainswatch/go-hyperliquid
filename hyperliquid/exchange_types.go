@@ -59,13 +59,17 @@ type TriggerOrderType struct {
 
 type TpSl string
 
-const TriggerTp TpSl = "tp"
-const TriggerSl TpSl = "sl"
+const (
+	TriggerTp TpSl = "tp"
+	TriggerSl TpSl = "sl"
+)
 
 type Grouping string
 
-const GroupingNa Grouping = "na"
-const GroupingTpSl Grouping = "positionTpsl"
+const (
+	GroupingNa   Grouping = "na"
+	GroupingTpSl Grouping = "positionTpsl"
+)
 
 type Message struct {
 	Source       string `json:"source"`
@@ -73,13 +77,13 @@ type Message struct {
 }
 
 type OrderWire struct {
-	Asset      int           `msgpack:"a" json:"a"`
-	IsBuy      bool          `msgpack:"b" json:"b"`
-	LimitPx    string        `msgpack:"p" json:"p"`
-	SizePx     string        `msgpack:"s" json:"s"`
-	ReduceOnly bool          `msgpack:"r" json:"r"`
-	OrderType  OrderTypeWire `msgpack:"t" json:"t"`
-	Cloid      string        `msgpack:"c,omitempty" json:"c,omitempty"`
+	Asset      int       `msgpack:"a" json:"a"`
+	IsBuy      bool      `msgpack:"b" json:"b"`
+	LimitPx    string    `msgpack:"p" json:"p"`
+	SizePx     string    `msgpack:"s" json:"s"`
+	ReduceOnly bool      `msgpack:"r" json:"r"`
+	OrderType  OrderType `msgpack:"t" json:"t"`
+	Cloid      string    `msgpack:"c,omitempty" json:"c,omitempty"`
 }
 type ModifyResponse struct {
 	Status   string             `json:"status"`
@@ -90,8 +94,8 @@ type ModifyOrderWire struct {
 	Order   OrderWire `msgpack:"order" json:"order"`
 }
 type ModifyOrderAction struct {
-	Type     string            `msgpack:"type" json:"type"`
-	Modifies []ModifyOrderWire `msgpack:"modifies" json:"modifies"`
+	Type     string               `msgpack:"type" json:"type"`
+	Modifies []ModifyOrderRequest `msgpack:"modifies" json:"modifies"`
 }
 
 type ModifyOrderRequest struct {

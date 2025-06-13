@@ -60,54 +60,9 @@ func OrderRequestToWire(req OrderRequest, meta map[string]AssetInfo, isSpot bool
 		LimitPx:    PriceToWire(req.LimitPx, maxDecimals, info.SzDecimals),
 		SizePx:     SizeToWire(req.Sz, info.SzDecimals),
 		ReduceOnly: req.ReduceOnly,
-		OrderType:  OrderTypeToWire(req.OrderType),
+		OrderType:  req.OrderType,
 		Cloid:      req.Cloid,
 	}
-}
-
-func ModifyOrderRequestToWire(req ModifyOrderRequest, meta map[string]AssetInfo, isSpot bool) ModifyOrderWire {
-	info := meta[req.Coin]
-	var assetId, maxDecimals int
-	if isSpot {
-		// https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api/asset-ids
-		assetId = info.AssetId + 10000
-		maxDecimals = SPOT_MAX_DECIMALS
-	} else {
-		assetId = info.AssetId
-		maxDecimals = PERP_MAX_DECIMALS
-	}
-	return ModifyOrderWire{
-		OrderId: req.OrderId,
-		Order: OrderWire{
-			Asset:      assetId,
-			IsBuy:      req.IsBuy,
-			LimitPx:    PriceToWire(req.LimitPx, maxDecimals, info.SzDecimals),
-			SizePx:     SizeToWire(req.Sz, info.SzDecimals),
-			ReduceOnly: req.ReduceOnly,
-			OrderType:  OrderTypeToWire(req.OrderType),
-		},
-	}
-}
-
-func OrderTypeToWire(orderType OrderType) OrderTypeWire {
-	if orderType.Limit != nil {
-		return OrderTypeWire{
-			Limit: &LimitOrderType{
-				Tif: orderType.Limit.Tif,
-			},
-			Trigger: nil,
-		}
-	} else if orderType.Trigger != nil {
-		return OrderTypeWire{
-			Trigger: &TriggerOrderType{
-				TpSl:      orderType.Trigger.TpSl,
-				TriggerPx: orderType.Trigger.TriggerPx,
-				IsMarket:  orderType.Trigger.IsMarket,
-			},
-			Limit: nil,
-		}
-	}
-	return OrderTypeWire{}
 }
 
 // Format the float with custom decimal places, default is 6 (perp), 8 (spot).
