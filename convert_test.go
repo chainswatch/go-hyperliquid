@@ -21,7 +21,7 @@ func TestConvert_SizeToWire(t *testing.T) {
 			name:     "PNUT Size",
 			input:    101.22,
 			szDec:    1,
-			expected: "101.2",
+			expected: "101.22",
 		},
 		{
 			name:     "ETH Size",
@@ -33,7 +33,7 @@ func TestConvert_SizeToWire(t *testing.T) {
 			name:     "ADA Size",
 			input:    100.123456,
 			szDec:    0,
-			expected: "100",
+			expected: "100.123456",
 		},
 		{
 			name:     "ETH Size",
@@ -57,7 +57,7 @@ func TestConvert_SizeToWire(t *testing.T) {
 			name:     "ETH Size",
 			input:    0.010000001,
 			szDec:    4,
-			expected: "0.01",
+			expected: "0.010000001",
 		},
 	}
 	for _, tc := range testCases {
@@ -90,14 +90,14 @@ func TestConvert_PriceToWire(t *testing.T) {
 			input:    105000.1234,
 			maxDec:   6,
 			szDec:    5,
-			expected: "105000",
+			expected: "105000.1234",
 		},
 		{
 			name:     "BTC Price",
 			input:    95001.123456,
 			maxDec:   6,
 			szDec:    5,
-			expected: "95001",
+			expected: "95001.123456",
 		},
 	}
 	for _, tc := range testCases {

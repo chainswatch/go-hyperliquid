@@ -56,10 +56,22 @@ Environment files like `.env` and `.test.env` are ignored by git.
 
 If these variables are missing when the tests run the suite will fail immediately.
 
-Run the tests with:
+Run the unit tests with:
 
 ```
 make test
+```
+
+Run the integration tests (requires `TEST_ADDRESS` and `TEST_PRIVATE_KEY`):
+
+```
+make integration
+```
+
+To run both sets together use:
+
+```
+make test-all
 ```
 
 The Makefile uses `go test -count=1` so results are not cached between runs.
