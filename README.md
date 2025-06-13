@@ -54,10 +54,14 @@ TEST_PRIVATE_KEY=...
 The test suite automatically loads this file if present. Avoid committing any real credentials to source control.
 Environment files like `.env` and `.test.env` are ignored by git.
 
+When these variables are not set, integration tests are skipped rather than failing.
+
 Run the tests with:
 
 ```
 make test
 ```
+
+The Makefile uses `go test -count=1` so results are not cached between runs.
 
 
