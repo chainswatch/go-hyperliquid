@@ -1,4 +1,4 @@
-module github.com/chainswatch/go-hyperliquid/hyperliquid
+module github.com/chainswatch/go-hyperliquid
 
 go 1.23.4
 
