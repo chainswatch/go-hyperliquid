@@ -12,7 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// IClient is the interface that wraps the basic Requst method.
+// IClient is the interface that wraps the basic Request method.
 //
 // Request method sends a POST request to the HyperLiquid API.
 // IsMainnet method returns true if the client is connected to the mainnet.
@@ -35,7 +35,7 @@ type IClient interface {
 type Client struct {
 	baseUrl        string       // Base URL of the HyperLiquid API
 	privateKey     string       // Private key for the client
-	defualtAddress string       // Default address for the client
+	defaultAddress string       // Default address for the client
 	isMainnet      bool         // Network type
 	Debug          bool         // Debug mode
 	httpClient     *http.Client // HTTP client
@@ -72,7 +72,7 @@ func NewClient(isMainnet bool) *Client {
 		Debug:          false,
 		isMainnet:      isMainnet,
 		privateKey:     "",
-		defualtAddress: "",
+		defaultAddress: "",
 		Logger:         logger,
 		keyManager:     nil,
 	}
@@ -87,9 +87,8 @@ func (client *Client) debug(format string, v ...interface{}) {
 
 // SetPrivateKey sets the private key for the client.
 func (client *Client) SetPrivateKey(privateKey string) error {
-	if strings.HasPrefix(privateKey, "0x") {
-		privateKey = strings.TrimPrefix(privateKey, "0x") // remove 0x prefix from private key
-	}
+	// always remove an optional 0x/0X prefix
+	privateKey = strings.TrimPrefix(strings.TrimPrefix(privateKey, "0x"), "0X")
 	client.privateKey = privateKey
 	var err error
 	client.keyManager, err = NewPKeyManager(privateKey)
@@ -100,12 +99,12 @@ func (client *Client) SetPrivateKey(privateKey string) error {
 // In case you use PKeyManager from API section https://app.hyperliquid.xyz/API
 // Then you can use this method to set the address.
 func (client *Client) SetAccountAddress(address string) {
-	client.defualtAddress = address
+	client.defaultAddress = address
 }
 
 // Returns the public address connected to the API.
 func (client *Client) AccountAddress() string {
-	return client.defualtAddress
+	return client.defaultAddress
 }
 
 // IsMainnet returns true if the client is connected to the mainnet.

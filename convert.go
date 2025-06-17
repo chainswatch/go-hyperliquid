@@ -83,19 +83,9 @@ func FloatToWire(x float64, maxDecimals int, szDecimals int) string {
 			rounded = strings.TrimSuffix(rounded, "0")
 		}
 	}
-	if strings.HasSuffix(rounded, ".") {
-		rounded = strings.TrimSuffix(rounded, ".")
-	}
+	// remove trailing decimal point if present
+	rounded = strings.TrimSuffix(rounded, ".")
 	return rounded
-}
-
-// fastPow10 returns 10^exp as a float64. For our purposes exp is small.
-func pow10(exp int) float64 {
-	var res float64 = 1
-	for i := 0; i < exp; i++ {
-		res *= 10
-	}
-	return res
 }
 
 // PriceToWire converts a price value to its string representation per Hyperliquid rules.
