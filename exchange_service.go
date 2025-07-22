@@ -42,11 +42,11 @@ type ExchangeAPI struct {
 
 // NewExchangeAPI creates a new default ExchangeAPI.
 // Run SetPrivateKey() and SetAccountAddress() to set the private key and account address.
-func NewExchangeAPI(isMainnet bool) *ExchangeAPI {
+func NewExchangeAPI(isMainnet bool, options ...ClientOption) *ExchangeAPI {
 	api := ExchangeAPI{
-		Client:       *NewClient(isMainnet),
+		Client:       *NewClient(isMainnet, options...),
 		baseEndpoint: "/exchange",
-		infoAPI:      NewInfoAPI(isMainnet),
+		infoAPI:      NewInfoAPI(isMainnet, options...),
 		address:      "",
 	}
 	// turn on debug mode if there is an error with /info service

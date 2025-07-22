@@ -46,10 +46,10 @@ type InfoAPI struct {
 // NewInfoAPI returns a new instance of the InfoAPI struct.
 // It sets the base endpoint to "/info" and the client to the NewClient function.
 // The isMainnet parameter is used to set the network type.
-func NewInfoAPI(isMainnet bool) *InfoAPI {
+func NewInfoAPI(isMainnet bool, options ...ClientOption) *InfoAPI {
 	api := InfoAPI{
 		baseEndpoint: "/info",
-		Client:       *NewClient(isMainnet),
+		Client:       *NewClient(isMainnet, options...),
 	}
 	spotMeta, err := api.BuildSpotMetaMap()
 	if err != nil {

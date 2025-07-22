@@ -20,7 +20,7 @@ type HyperliquidClientConfig struct {
 	AccountAddress string
 }
 
-func NewHyperliquid(config *HyperliquidClientConfig) *Hyperliquid {
+func NewHyperliquid(config *HyperliquidClientConfig, options ...ClientOption) *Hyperliquid {
 	var defaultConfig *HyperliquidClientConfig
 	if config == nil {
 		defaultConfig = &HyperliquidClientConfig{
@@ -31,10 +31,10 @@ func NewHyperliquid(config *HyperliquidClientConfig) *Hyperliquid {
 	} else {
 		defaultConfig = config
 	}
-	exchangeAPI := NewExchangeAPI(defaultConfig.IsMainnet)
+	exchangeAPI := NewExchangeAPI(defaultConfig.IsMainnet, options...)
 	exchangeAPI.SetPrivateKey(defaultConfig.PrivateKey)
 	exchangeAPI.SetAccountAddress(defaultConfig.AccountAddress)
-	infoAPI := NewInfoAPI(defaultConfig.IsMainnet)
+	infoAPI := NewInfoAPI(defaultConfig.IsMainnet, options...)
 	infoAPI.SetAccountAddress(defaultConfig.AccountAddress)
 	return &Hyperliquid{
 		ExchangeAPI: *exchangeAPI,
