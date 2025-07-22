@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -58,22 +57,16 @@ func getURL(isMainnet bool) string {
 }
 
 // NewClient returns a new instance of the Client struct.
-func NewClient(isMainnet bool) *Client {
-	logger := log.New()
-	logger.SetFormatter(&log.TextFormatter{
-		FullTimestamp: true,
-		PadLevelText:  true,
-	})
-	logger.SetOutput(os.Stdout)
-	logger.SetLevel(log.DebugLevel)
+func NewClient(isMainnet bool, options ...ClientOption) *Client {
+	opts := applyOptions(options)
 	return &Client{
 		baseUrl:        getURL(isMainnet),
-		httpClient:     http.DefaultClient,
-		Debug:          false,
+		httpClient:     opts.httpClient,
+		Debug:          opts.debug,
 		isMainnet:      isMainnet,
 		privateKey:     "",
 		defaultAddress: "",
-		Logger:         logger,
+		Logger:         opts.logger,
 		keyManager:     nil,
 	}
 }
