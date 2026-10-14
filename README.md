@@ -1,48 +1,63 @@
 # go-hyperliquid
-A Golang SDK for the Hyperliquid API.
 
-# API reference
-- [Hyperliquid](https://app.hyperliquid.xyz/)
-- [Hyperliquid API docs](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api)
-- [Hyperliquid official Python SDK](https://github.com/hyperliquid-dex/hyperliquid-python-sdk)
+**A Go SDK for the Hyperliquid API: market data, account state and order execution.**
 
-# How to install?
-```
+[![Go Reference](https://pkg.go.dev/badge/github.com/chainswatch/go-hyperliquid.svg)](https://pkg.go.dev/github.com/chainswatch/go-hyperliquid)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-767BFF?style=flat)](LICENSE)
+[![Go](https://img.shields.io/badge/go-1.25-13161D?style=flat&logo=go)](go.mod)
+
+Maintained by [Chainswatch](https://chainswatch.com). Forked from [Logarithm-Labs/go-hyperliquid](https://github.com/Logarithm-Labs/go-hyperliquid).
+
+## Install
+
+```sh
 go get github.com/chainswatch/go-hyperliquid
 ```
 
-# Documentation
+## Quickstart
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/chainswatch/go-hyperliquid.svg)](https://pkg.go.dev/github.com/chainswatch/go-hyperliquid)
-
-
-# Quick start
-```
+```go
 package main
 
 import (
 	"log"
+	"os"
 
-        "github.com/chainswatch/go-hyperliquid"
+	"github.com/chainswatch/go-hyperliquid"
 )
 
 func main() {
-	hyperliquidClient := hyperliquid.NewHyperliquid(&hyperliquid.HyperliquidClientConfig{
+	client := hyperliquid.NewHyperliquid(&hyperliquid.HyperliquidClientConfig{
 		IsMainnet:      true,
-		AccountAddress: "0x12345",   // Main address of the Hyperliquid account that you want to use
-		PrivateKey:     "abc1234",   // Private key of the account or API private key from Hyperliquid
+		AccountAddress: os.Getenv("HL_ADDRESS"),     // main address of the Hyperliquid account
+		PrivateKey:     os.Getenv("HL_PRIVATE_KEY"), // account or API wallet private key; can be empty for public endpoints
 	})
 
-	// Get balances
-	res, err := hyperliquidClient.GetAccountState()
+	// Mid prices for all coins (public endpoint)
+	mids, err := client.GetAllMids()
 	if err != nil {
-		log.Print(err)
+		log.Fatal(err)
 	}
-	log.Printf("GetAccountState(): %+v", res)
+	log.Printf("BTC mid: %s", (*mids)["BTC"])
+
+	// Account state (balances and positions)
+	state, err := client.GetAccountState()
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("GetAccountState(): %+v", state)
 }
 ```
 
-# Running tests
+Full API: [pkg.go.dev/github.com/chainswatch/go-hyperliquid](https://pkg.go.dev/github.com/chainswatch/go-hyperliquid).
+
+## References
+
+- [Hyperliquid](https://app.hyperliquid.xyz/)
+- [Hyperliquid API docs](https://hyperliquid.gitbook.io/hyperliquid-docs/for-developers/api)
+- [Hyperliquid official Python SDK](https://github.com/hyperliquid-dex/hyperliquid-python-sdk)
+
+## Running tests
 
 Integration tests require access to a funded Hyperliquid account. Provide the credentials via environment variables `TEST_ADDRESS` and `TEST_PRIVATE_KEY`. For convenience you can copy `.test.env.example` to `.test.env` at the repository root and populate these variables:
 
@@ -76,4 +91,10 @@ make test-all
 
 The Makefile uses `go test -count=1` so results are not cached between runs.
 
+## License
 
+Apache 2.0. See [LICENSE](LICENSE).
+
+---
+
+Built by [Chainswatch](https://chainswatch.com).
